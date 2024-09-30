@@ -1,0 +1,38 @@
+/public/hot
+/public/storage
+.env.backup
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+
+# Ignore sensitive files
+.env
+
+# Laravel vendor folder
+/vendor
+
+# Ignore node modules
+/node_modules
+
+# Laravel storage (except some required directories)
+storage/*.key
+storage/*.log
+storage/*.cache
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/cache/*.data
+
+# Laravel cache and compiled files
+/bootstrap/cache/*.php
+
+# IDE/editor settings
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Misc
+npm-debug.log
+yarn-error.log
+
