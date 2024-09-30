@@ -43,7 +43,7 @@ export default {
     },
     methods:{
         async create(){
-            await this.axios.post('/api/category',this.category).then(response=>{
+            await this.axios.post('/category',this.category).then(response=>{
                 this.$router.push({name:"categoryList"})
             }).catch(error=>{
                 console.log(error)

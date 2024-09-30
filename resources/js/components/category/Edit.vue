@@ -47,7 +47,7 @@ export default {
     },
     methods:{
         async showCategory(){
-            await this.axios.get(`/api/category/${this.$route.params.id}`).then(response=>{
+            await this.axios.get(`/category/${this.$route.params.id}`).then(response=>{
                 const { title, description } = response.data
                 this.category.title = title
                 this.category.description = description
@@ -56,7 +56,7 @@ export default {
             })
         },
         async update(){
-            await this.axios.post(`/api/category/${this.$route.params.id}`,this.category).then(response=>{
+            await this.axios.post(`/category/${this.$route.params.id}`,this.category).then(response=>{
                 this.$router.push({name:"categoryList"})
             }).catch(error=>{
                 console.log(error)

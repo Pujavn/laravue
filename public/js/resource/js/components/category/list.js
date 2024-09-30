@@ -33,7 +33,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           while (1) switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.axios.get('/api/category').then(function (response) {
+              return _this.axios.get('/category').then(function (response) {
                 _this.categories = response.data;
               })["catch"](function (error) {
                 console.log(error);
@@ -49,7 +49,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     deleteCategory: function deleteCategory(id) {
       var _this2 = this;
       if (confirm("Are you sure to delete this category ?")) {
-        this.axios["delete"]("/api/category/".concat(id)).then(function (response) {
+        this.axios["delete"]("/category/".concat(id)).then(function (response) {
           _this2.getCategories();
         })["catch"](function (error) {
           console.log(error);

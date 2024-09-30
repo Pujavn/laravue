@@ -37,7 +37,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           while (1) switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return _this.axios.get("/api/category/".concat(_this.$route.params.id)).then(function (response) {
+              return _this.axios.get("/category/".concat(_this.$route.params.id)).then(function (response) {
                 var _response$data = response.data,
                   title = _response$data.title,
                   description = _response$data.description;
@@ -60,7 +60,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return _this2.axios.post("/api/category/".concat(_this2.$route.params.id), _this2.category).then(function (response) {
+              return _this2.axios.post("/category/".concat(_this2.$route.params.id), _this2.category).then(function (response) {
                 _this2.$router.push({
                   name: "categoryList"
                 });
