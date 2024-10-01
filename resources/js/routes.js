@@ -31,6 +31,8 @@ const CategoryList = () => import('./components/category/List.vue' /* webpackChu
 const CategoryCreate = () => import('./components/category/Add.vue' /* webpackChunkName: "resource/js/components/category/add" */);
 const CategoryEdit = () => import('./components/category/Edit.vue' /* webpackChunkName: "resource/js/components/category/edit" */);
 const Login = () => import('./components/Login.vue' /* webpackChunkName: "resource/js/components/login" */); // Add a login component
+const Register = () => import('./components/Register.vue' /* webpackChunkName: "resource/js/components/register" */);
+
 
 // Define your routes
 export const routes = [
@@ -63,11 +65,18 @@ export const routes = [
         path: '/login',
         component: Login,
         meta: { requiresGuest: true }
+    },
+    {
+        name: 'register',
+        path: '/register',
+        component: Register,
+        meta: { requiresGuest: true }
     }
 ];
 
 // Import Vue Router
 import { createRouter, createWebHistory } from 'vue-router';
+
 
 // Create a Vue Router instance
 const router = createRouter({

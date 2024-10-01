@@ -3,12 +3,13 @@
     <main>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <router-link to="/" class="navbar-brand" href="#">Laravel Vue Crud App</router-link>
+                <router-link to="/" class="navbar-brand" href="#">User Management App</router-link>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav">
                         <router-link exact-active-class="active" to="/" class="nav-item nav-link">Home</router-link>
-                        <router-link v-if="isAuthenticated" exact-active-class="active" to="/category" class="nav-item nav-link">Category</router-link>
+                        <!-- <router-link v-if="isAuthenticated" exact-active-class="active" to="/category" class="nav-item nav-link">Category</router-link> -->
                         <!-- Dynamically show login or logout based on authentication status -->
+                        <router-link v-if="!isAuthenticated" exact-active-class="active" to="/register" class="nav-item nav-link">Register User</router-link>
                         <router-link v-if="!isAuthenticated" exact-active-class="active" to="/login" class="nav-item nav-link">Login</router-link>
                         <a v-else @click="logout" class="nav-item nav-link" href="#">Logout</a>
                     </div>
@@ -41,7 +42,9 @@ export default {
         // Remove the token from localStorage
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
-        
+        // Update isAuthenticated to false
+        isAuthenticated.value = false;
+
         // Redirect to the login page using the router
         router.push('/login');
       } catch (error) {

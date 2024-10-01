@@ -12,7 +12,9 @@
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
       </form>
-      <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+      <div v-if="errorMessage" class="alert alert-danger mt-3">
+        {{ errorMessage }}
+      </div>
     </div>
   </template>
   
@@ -30,27 +32,41 @@
   
       const login = async () => {
         try {
+          // Make a POST request to the login API
           const response = await axios.post('/login', {
             email: email.value,
             password: password.value,
           });
-  
-          // Store the token in localStorage
-          localStorage.setItem('token', response.data.token);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-  
-          // Redirect to home page after login
-          router.push('/');
+
+          // Check if the login was successful and if the user is active
+          if (response.status === 200 && response.data.token) {
+            // Store the token in localStorage
+            localStorage.setItem('token', response.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+            // Redirect to the home or dashboard page after successful login
+            router.push('/');
+          }
         } catch (error) {
-          errorMessage.value = 'Invalid login credentials';
+          // Handle specific error responses from the server
+          if (error.response && error.response.status === 403) {
+            // If the user's account is not activated, show an appropriate message
+            errorMessage.value = 'Please activate your account. Check your email for the activation link.';
+          } else if (error.response && error.response.status === 401) {
+            // Invalid login credentials
+            errorMessage.value = 'Invalid login credentials. Please try again.';
+          } else {
+            // General error message
+            errorMessage.value = 'An error occurred. Please try again later.';
+          }
         }
       };
   
       return { email, password, errorMessage, login };
     },
   };
-  </script>
-  
+</script>
+
   <style scoped>
   .login-form {
     max-width: 400px;

@@ -22262,20 +22262,22 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               // Remove the token from localStorage
               localStorage.removeItem('token');
               delete (axios__WEBPACK_IMPORTED_MODULE_1___default().defaults).headers.common['Authorization'];
+              // Update isAuthenticated to false
+              isAuthenticated.value = false;
 
               // Redirect to the login page using the router
               router.push('/login');
-              _context.next = 11;
+              _context.next = 12;
               break;
-            case 8:
-              _context.prev = 8;
+            case 9:
+              _context.prev = 9;
               _context.t0 = _context["catch"](0);
               console.error('Logout failed:', _context.t0);
-            case 11:
+            case 12:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 8]]);
+        }, _callee, null, [[0, 9]]);
       }));
       return function logout() {
         return _ref.apply(this, arguments);
@@ -22327,7 +22329,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     href: "#"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return _cache[1] || (_cache[1] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Laravel Vue Crud App")]);
+      return _cache[1] || (_cache[1] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("User Management App")]);
     }),
     _: 1 /* STABLE */
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
@@ -22339,17 +22341,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return _cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Home")]);
     }),
     _: 1 /* STABLE */
-  }), $setup.isAuthenticated ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_router_link, {
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <router-link v-if=\"isAuthenticated\" exact-active-class=\"active\" to=\"/category\" class=\"nav-item nav-link\">Category</router-link> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Dynamically show login or logout based on authentication status "), !$setup.isAuthenticated ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_router_link, {
     key: 0,
     "exact-active-class": "active",
-    to: "/category",
+    to: "/register",
     "class": "nav-item nav-link"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return _cache[3] || (_cache[3] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Category")]);
+      return _cache[3] || (_cache[3] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Register User")]);
     }),
     _: 1 /* STABLE */
-  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Dynamically show login or logout based on authentication status "), !$setup.isAuthenticated ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_router_link, {
+  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), !$setup.isAuthenticated ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_router_link, {
     key: 1,
     "exact-active-class": "active",
     to: "/login",
@@ -22513,6 +22515,9 @@ var CategoryEdit = function CategoryEdit() {
 var Login = function Login() {
   return __webpack_require__.e(/*! import() | resource/js/components/login */ "resource/js/components/login").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Login.vue */ "./resources/js/components/Login.vue"));
 }; // Add a login component
+var Register = function Register() {
+  return __webpack_require__.e(/*! import() | resource/js/components/register */ "resource/js/components/register").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Register.vue */ "./resources/js/components/Register.vue"));
+};
 
 // Define your routes
 var routes = [{
@@ -22547,6 +22552,13 @@ var routes = [{
   name: 'login',
   path: '/login',
   component: Login,
+  meta: {
+    requiresGuest: true
+  }
+}, {
+  name: 'register',
+  path: '/register',
+  component: Register,
   meta: {
     requiresGuest: true
   }
@@ -27062,7 +27074,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"name":"axios","version":"0.21.4","de
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resource/js/components/welcome":1,"resource/js/components/category/list":1,"resource/js/components/category/add":1,"resource/js/components/category/edit":1,"resource/js/components/login":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resource/js/components/welcome":1,"resource/js/components/category/list":1,"resource/js/components/category/add":1,"resource/js/components/category/edit":1,"resource/js/components/login":1,"resource/js/components/register":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

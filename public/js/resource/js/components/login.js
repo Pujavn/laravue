@@ -42,23 +42,36 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               });
             case 3:
               response = _context.sent;
-              // Store the token in localStorage
-              localStorage.setItem('token', response.data.token);
-              (axios__WEBPACK_IMPORTED_MODULE_1___default().defaults).headers.common['Authorization'] = "Bearer ".concat(response.data.token);
+              // Check if the login was successful and if the user is active
+              if (response.status === 200 && response.data.token) {
+                // Store the token in localStorage
+                localStorage.setItem('token', response.data.token);
+                (axios__WEBPACK_IMPORTED_MODULE_1___default().defaults).headers.common['Authorization'] = "Bearer ".concat(response.data.token);
 
-              // Redirect to home page after login
-              router.push('/');
-              _context.next = 12;
+                // Redirect to the home or dashboard page after successful login
+                router.push('/');
+              }
+              _context.next = 10;
               break;
-            case 9:
-              _context.prev = 9;
+            case 7:
+              _context.prev = 7;
               _context.t0 = _context["catch"](0);
-              errorMessage.value = 'Invalid login credentials';
-            case 12:
+              // Handle specific error responses from the server
+              if (_context.t0.response && _context.t0.response.status === 403) {
+                // If the user's account is not activated, show an appropriate message
+                errorMessage.value = 'Please activate your account. Check your email for the activation link.';
+              } else if (_context.t0.response && _context.t0.response.status === 401) {
+                // Invalid login credentials
+                errorMessage.value = 'Invalid login credentials. Please try again.';
+              } else {
+                // General error message
+                errorMessage.value = 'An error occurred. Please try again later.';
+              }
+            case 10:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 9]]);
+        }, _callee, null, [[0, 7]]);
       }));
       return function login() {
         return _ref.apply(this, arguments);
@@ -98,7 +111,7 @@ var _hoisted_3 = {
 };
 var _hoisted_4 = {
   key: 0,
-  "class": "text-danger"
+  "class": "alert alert-danger mt-3"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "Login", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
@@ -128,7 +141,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.password]])]), _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "submit",
     "class": "btn btn-primary"
-  }, "Login", -1 /* HOISTED */))], 32 /* NEED_HYDRATION */), $setup.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.errorMessage), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  }, "Login", -1 /* HOISTED */))], 32 /* NEED_HYDRATION */), $setup.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.errorMessage), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),

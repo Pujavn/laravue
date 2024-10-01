@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'address',
+        'gender',
+        'status',
     ];
 
     /**
@@ -41,4 +44,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    /**
+     * Many-to-Many relationship: User can have multiple States.
+     */
+    public function states()
+    {
+        return $this->belongsToMany(State::class, 'user_state');
+    }
+
+    /**
+     * Many-to-Many relationship: User can have multiple Cities.
+     */
+    public function cities()
+    {
+        return $this->belongsToMany(City::class, 'user_city');
+    }
 }
