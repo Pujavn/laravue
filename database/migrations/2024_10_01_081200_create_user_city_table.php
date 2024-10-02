@@ -14,13 +14,19 @@ class CreateUserCityTable extends Migration
     public function up()
     {
         Schema::create('user_city', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('city_id');
+            $table->id(); // Primary key
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
-            $table->timestamps();
+            // Foreign key for users
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->onDelete('cascade'); // Cascade on user delete
+
+            // Foreign key for cities
+            $table->foreignId('city_id')
+                  ->constrained('cities')
+                  ->onDelete('cascade'); // Cascade on city delete
+
+            $table->timestamps(); // Timestamps for created_at and updated_at
         });
     }
 

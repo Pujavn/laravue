@@ -46,6 +46,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               if (response.status === 200 && response.data.token) {
                 // Store the token in localStorage
                 localStorage.setItem('token', response.data.token);
+                localStorage.setItem('role', response.data.role); // Store user role
                 (axios__WEBPACK_IMPORTED_MODULE_1___default().defaults).headers.common['Authorization'] = "Bearer ".concat(response.data.token);
 
                 // Redirect to the home or dashboard page after successful login

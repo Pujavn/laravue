@@ -70,8 +70,11 @@ class AuthController extends Controller
             // If the user is active, create a token
             $token = $user->createToken('api-token')->plainTextToken;
 
-            // Return the token in the response
-            return response()->json(['token' => $token], 200);
+            // Return the token and the user's role in the response
+            return response()->json([
+                'token' => $token,
+                'role' => $user->role  // Assuming your User model has a 'role' field
+            ], 200);
         } else {
             // Return an error message if the credentials are invalid
             return response()->json(['message' => 'Invalid credentials'], 401);

@@ -42,6 +42,7 @@
           if (response.status === 200 && response.data.token) {
             // Store the token in localStorage
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('role', response.data.role);  // Store user role
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
             // Redirect to the home or dashboard page after successful login
