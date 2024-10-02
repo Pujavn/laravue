@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ActivationEmail;
-use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Str;
+
 
 class AuthController extends Controller
 {
-    // Register a new user
     public function register(Request $request)
     {
         $request->validate([
@@ -25,6 +25,9 @@ class AuthController extends Controller
             'city_ids' => 'array|required',   // Accepts multiple cities
         ]);
 
+        // Generate a unique activation token
+        $activationToken = Str::random(60);  // Generates a random 32-character token
+
         // Create a new user
         $user = User::create([
             'name' => $request->name,
@@ -33,17 +36,18 @@ class AuthController extends Controller
             'address' => $request->address,
             'gender' => $request->gender,
             'status' => 'pending',  // Default status: pending activation
+            'activation_token' => $activationToken,  // Store the activation token
         ]);
 
         // Attach the selected states and cities to the user (Many-to-Many)
         $user->states()->attach($request->state_ids);
         $user->cities()->attach($request->city_ids);
 
-        // Send activation email
-        Mail::to($user->email)->send(new ActivationEmail($user));
+        // Send activation email with the activation token
+        Mail::to($user->email)->send(new ActivationEmail($user, $activationToken));  // Pass token to email
 
         return response()->json([
-            'message' => 'User registered successfully!',
+            'message' => 'User registered successfully! Please check your email to activate your account.',
             'user' => $user,
         ], 201);
     }
@@ -59,7 +63,7 @@ class AuthController extends Controller
         // Attempt to log in using the provided credentials
         if (Auth::attempt($credentials)) {
             // Retrieve the authenticated user
-            $user = Auth::user();
+            $user = Auth::user();  // Consistently use Auth::user()
 
             // Check if the user's account is active
             if ($user->status !== 'active') {
@@ -73,7 +77,7 @@ class AuthController extends Controller
             // Return the token and the user's role in the response
             return response()->json([
                 'token' => $token,
-                'role' => $user->role  // Assuming your User model has a 'role' field
+                'role' => $user->role,  // Assuming your User model has a 'role' field
             ], 200);
         } else {
             // Return an error message if the credentials are invalid
@@ -99,15 +103,12 @@ class AuthController extends Controller
         // Get the token from the URL
         $token = $request->query('token');
 
-        // Find the access token in the personal_access_tokens table
-        $personalAccessToken = PersonalAccessToken::findToken($token);
+        // Find the user by the activation token
+        $user = User::where('activation_token', $token)->first();
 
-        if (!$personalAccessToken) {
+        if (!$user) {
             return response()->json(['message' => 'Invalid activation token'], 404);
         }
-
-        // Find the user who owns the token
-        $user = $personalAccessToken->tokenable;
 
         if ($user->status === 'active') {
             return response()->json(['message' => 'Your account is already activated'], 200);
@@ -115,10 +116,8 @@ class AuthController extends Controller
 
         // Activate the user's account
         $user->status = 'active';
+        $user->activation_token = null;  // Clear the activation token after activation
         $user->save();
-
-        // Delete the activation token after successful activation
-        $personalAccessToken->delete();
 
         return response()->json(['message' => 'Your account has been activated'], 200);
     }

@@ -27,7 +27,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 // Route::get('/users', [UserController::class, 'index'])->middleware('auth:sanctum');
 // Route::get('/activate', [UserController::class, 'activateUser']);
-Route::get('/activate', [AuthController::class, 'activateAccount']);
+Route::get('/activate-account', [AuthController::class, 'activateAccount']);
 //get cities based on selected state
 Route::get('/states/{state_id}/cities', [CityController::class, 'getCitiesByState']);
 

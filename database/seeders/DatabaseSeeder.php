@@ -14,9 +14,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         //  \App\Models\User::factory(10)->create();
-        $this->call([
-            StateSeeder::class,
-            CitySeeder::class,
-        ]);
+        // $this->call([
+        //     StateSeeder::class,
+        //     CitySeeder::class,
+        // ]);
+
+        // Call the UserSeeder to create default users
+        $this->call(UserSeeder::class);
     }
 }
