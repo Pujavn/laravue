@@ -139,7 +139,6 @@ export default {
           // On success, show a success message
           this.success = 'Registration successful! Please check your email to activate your account.';
           this.error = null;
-          this.resetForm();
 
           // Redirect to the home page after 2 seconds
           setTimeout(() => {

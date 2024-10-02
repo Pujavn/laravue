@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'address' => '123 Admin Street',
             'gender' => 'Male',
             'status' => 'active',
-            'role' => 'admin',  // Admin role
+            'role' => 'admin',  
             'activation_token' => null,  
         ]);
 
@@ -31,12 +31,12 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Regular User',
             'email' => 'user@example.com',
-            'password' => Hash::make('password'),  // You can choose a better password
+            'password' => Hash::make('password'), 
             'address' => '456 User Avenue',
             'gender' => 'Female',
             'status' => 'active',
-            'role' => 'user',  // Regular user role
-            'activation_token' => null,  // No activation required since the account is active
+            'role' => 'user',
+            'activation_token' => null,  
         ]);
     }
 }

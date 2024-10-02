@@ -121,7 +121,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               // On success, show a success message
               _this3.success = 'Registration successful! Please check your email to activate your account.';
               _this3.error = null;
-              _this3.resetForm();
 
               // Redirect to the home page after 2 seconds
               setTimeout(function () {
@@ -129,18 +128,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                   name: 'home'
                 }); // 'home' should match the name of your home route
               }, 2000);
-              _context3.next = 14;
+              _context3.next = 13;
               break;
-            case 10:
-              _context3.prev = 10;
+            case 9:
+              _context3.prev = 9;
               _context3.t0 = _context3["catch"](0);
               _this3.error = _context3.t0.response.data.errors || 'Registration failed';
               _this3.success = null;
-            case 14:
+            case 13:
             case "end":
               return _context3.stop();
           }
-        }, _callee3, null, [[0, 10]]);
+        }, _callee3, null, [[0, 9]]);
       }))();
     }
   },

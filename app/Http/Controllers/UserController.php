@@ -142,9 +142,11 @@ class UserController extends Controller
             return response()->json(['message' => 'Cannot delete an admin user!'], 403);
         }
 
-        // Detach related states and cities before deleting the user
-        $user->states()->detach(); // Detach all related states from the pivot table
-        $user->cities()->detach(); // Detach all related cities from the pivot table
+        // Detach related states and cities from the pivot tables before deleting the user
+        $user->permanentStates()->detach();  
+        $user->temporaryStates()->detach();
+        $user->permanentCities()->detach();
+        $user->temporaryCities()->detach();
 
         // Delete the user from the database
         $user->delete();
@@ -154,10 +156,7 @@ class UserController extends Controller
 
     public function profile()
     {
-        // This will automatically use the default guard (which is Sanctum for API routes)
         $user = auth()->user();
-
-        // Return error if not authenticated
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }

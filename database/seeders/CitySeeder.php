@@ -47,12 +47,12 @@ class CitySeeder extends Seeder
         ];
 
         foreach ($cities as $stateName => $cityList) {
-            $state = State::where('name', $stateName)->first();  // Find the state by name
+            $state = State::where('name', $stateName)->first();
 
             foreach ($cityList as $cityName) {
                 City::create([
                     'name' => $cityName,
-                    'state_id' => $state->id,  // Link city to its state
+                    'state_id' => $state->id,
                 ]);
             }
         }
