@@ -2,6 +2,8 @@
   <div>
     <h1>Edit User</h1>
     <form @submit.prevent="updateUser">
+
+      <!-- Basic User Info -->
       <div class="form-group">
         <label for="name">User Name</label>
         <input v-model="user.name" type="text" id="name" class="form-control" required />
@@ -26,20 +28,35 @@
         </select>
       </div>
 
-      <!-- State Dropdown -->
+      <!-- Permanent State and Cities -->
       <div class="form-group">
-        <label for="state">Select State</label>
-        <select v-model="selectedState" class="form-control" @change="fetchCities">
-          <option value="" disabled>Select a state</option>
+        <label for="permanent_state">Select Permanent State</label>
+        <select v-model="selectedPermanentState" class="form-control" @change="fetchCities('permanent')">
+          <option value="" disabled>Select a permanent state</option>
           <option v-for="state in states" :key="state.id" :value="state.id">{{ state.name }}</option>
         </select>
       </div>
 
-      <!-- City Dropdown -->
       <div class="form-group">
-        <label for="city">Select City</label>
-        <select v-model="selectedCities" class="form-control" multiple>
-          <option v-for="city in cities" :key="city.id" :value="city.id">{{ city.name }}</option>
+        <label for="permanent_cities">Select Permanent City/Cities</label>
+        <select v-model="selectedPermanentCities" class="form-control" multiple>
+          <option v-for="city in permanentCities" :key="city.id" :value="city.id">{{ city.name }}</option>
+        </select>
+      </div>
+
+      <!-- Temporary State and Cities -->
+      <div class="form-group">
+        <label for="temporary_state">Select Temporary State</label>
+        <select v-model="selectedTemporaryState" class="form-control" @change="fetchCities('temporary')">
+          <option value="" disabled>Select a temporary state</option>
+          <option v-for="state in states" :key="state.id" :value="state.id">{{ state.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="temporary_cities">Select Temporary City/Cities</label>
+        <select v-model="selectedTemporaryCities" class="form-control" multiple>
+          <option v-for="city in temporaryCities" :key="city.id" :value="city.id">{{ city.name }}</option>
         </select>
       </div>
 
@@ -60,10 +77,13 @@ export default {
         status: 'pending',
         role: 'user',
       },
-      selectedState: '',    // Track the selected state ID
-      selectedCities: [],   // Track the selected city IDs
-      states: [],           // List of available states
-      cities: [],           // List of cities for the selected state
+      selectedPermanentState: '',    // Track the selected permanent state ID
+      selectedPermanentCities: [],   // Track the selected permanent city IDs
+      selectedTemporaryState: '',    // Track the selected temporary state ID
+      selectedTemporaryCities: [],   // Track the selected temporary city IDs
+      states: [],                    // List of available states
+      permanentCities: [],           // List of cities for the selected permanent state
+      temporaryCities: [],           // List of cities for the selected temporary state
     };
   },
   async mounted() {
@@ -72,17 +92,22 @@ export default {
       const response = await axios.get(`/user/show/${this.$route.params.id}`);
       this.user = response.data.user;
 
-      // Pre-select the user's current state
-      if (response.data.user.states.length > 0) {
-        this.selectedState = response.data.user.states[0].id; // Assuming a single state
+      // Pre-select the user's current permanent state and cities
+      if (response.data.user.permanent_states.length > 0) {
+        this.selectedPermanentState = response.data.user.permanent_states[0].id;
       }
+      this.selectedPermanentCities = response.data.user.permanent_cities.map(city => city.id);
 
-      // Pre-select the user's current cities
-      this.selectedCities = response.data.user.cities.map(city => city.id);
+      // Pre-select the user's current temporary state and cities
+      if (response.data.user.temporary_states.length > 0) {
+        this.selectedTemporaryState = response.data.user.temporary_states[0].id;
+      }
+      this.selectedTemporaryCities = response.data.user.temporary_cities.map(city => city.id);
 
       // Fetch the available states and cities
       await this.fetchStates();
-      await this.fetchCities();
+      await this.fetchCities('permanent');
+      await this.fetchCities('temporary');
     } catch (error) {
       console.error('Failed to fetch user:', error);
     }
@@ -97,14 +122,17 @@ export default {
         console.error('Failed to fetch states:', error);
       }
     },
-    // Fetch cities based on the selected state
-    async fetchCities() {
+    // Fetch cities based on the selected state (type can be 'permanent' or 'temporary')
+    async fetchCities(type) {
       try {
-        if (this.selectedState) {
-          const response = await axios.get(`/states/${this.selectedState}/cities`);
-          this.cities = response.data;
-        } else {
-          this.cities = []; // Clear cities if no state is selected
+        let stateId = type === 'permanent' ? this.selectedPermanentState : this.selectedTemporaryState;
+        if (stateId) {
+          const response = await axios.get(`/states/${stateId}/cities`);
+          if (type === 'permanent') {
+            this.permanentCities = response.data;
+          } else {
+            this.temporaryCities = response.data;
+          }
         }
       } catch (error) {
         console.error('Failed to fetch cities:', error);
@@ -115,8 +143,10 @@ export default {
       try {
         await axios.put(`/user/update/${this.$route.params.id}`, {
           ...this.user,
-          state_ids: [this.selectedState], // Send state ID as an array
-          city_ids: this.selectedCities,   // Send selected city IDs
+          permanent_state_id: this.selectedPermanentState,      // Send selected permanent state
+          permanent_city_ids: this.selectedPermanentCities,     // Send selected permanent cities
+          temporary_state_id: this.selectedTemporaryState,      // Send selected temporary state
+          temporary_city_ids: this.selectedTemporaryCities,     // Send selected temporary cities
         });
         this.$router.push({ name: 'userList' });  // Redirect to user list after updating
       } catch (error) {

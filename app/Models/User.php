@@ -46,20 +46,31 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
-    /**
-     * Many-to-Many relationship: User can have multiple States.
-     */
-    public function states()
+    // Relationship for permanent states with type filter
+    public function permanentStates()
     {
-        return $this->belongsToMany(State::class, 'user_state');
+        return $this->belongsToMany(State::class, 'user_state')
+            ->wherePivot('type', 'permanent');
     }
 
-    /**
-     * Many-to-Many relationship: User can have multiple Cities.
-     */
-    public function cities()
+    // Relationship for temporary states with type filter
+    public function temporaryStates()
     {
-        return $this->belongsToMany(City::class, 'user_city');
+        return $this->belongsToMany(State::class, 'user_state')
+            ->wherePivot('type', 'temporary');
+    }
+
+    // Relationship for permanent cities with type filter
+    public function permanentCities()
+    {
+        return $this->belongsToMany(City::class, 'user_city')
+            ->wherePivot('type', 'permanent');
+    }
+
+    // Relationship for temporary cities with type filter
+    public function temporaryCities()
+    {
+        return $this->belongsToMany(City::class, 'user_city')
+            ->wherePivot('type', 'temporary');
     }
 }

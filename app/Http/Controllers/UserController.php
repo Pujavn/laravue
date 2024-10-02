@@ -59,23 +59,24 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403); // Unauthorized access
         }
 
-        // Find the user by ID, along with their associated states and cities
-        $user = User::with(['states', 'cities'])->findOrFail($id);
+        // Find the user by ID, along with their permanent and temporary states/cities
+        $user = User::with(['permanentStates', 'temporaryStates', 'permanentCities', 'temporaryCities'])->findOrFail($id);
 
         // Return the user data along with states and cities
         return response()->json([
             'user' => $user,
-            'states' => $user->states, // Include the states
-            'cities' => $user->cities  // Include the cities
+            'permanent_states' => $user->permanentStates,
+            'temporary_states' => $user->temporaryStates,
+            'permanent_cities' => $user->permanentCities,
+            'temporary_cities' => $user->temporaryCities,
         ]);
     }
 
     // Update user details including state and cities (admin only)
     public function update(Request $request, $id)
     {
-        // Ensure the authenticated user is an admin
         if (Gate::denies('isAdmin')) {
-            return response()->json(['message' => 'Unauthorized'], 403); // Unauthorized access
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         // Find the user by ID
@@ -87,8 +88,10 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id, // Ignore the current user's email for uniqueness
             'status' => 'required|in:pending,active,inactive',
             'role' => 'required|in:user,admin',
-            'state_ids' => 'array|required',  // State should be an array
-            'city_ids' => 'array|required',   // City should be an array
+            'permanent_state_id' => 'required|integer',
+            'permanent_city_ids' => 'required|array',
+            'temporary_state_id' => 'required|integer',
+            'temporary_city_ids' => 'required|array',
         ]);
 
         // Update user details
@@ -99,9 +102,23 @@ class UserController extends Controller
             'role' => $validatedData['role'],
         ]);
 
-        // Sync the selected states and cities (Many-to-Many relationships)
-        $user->states()->sync($validatedData['state_ids']); // Sync states
-        $user->cities()->sync($validatedData['city_ids']);  // Sync cities
+        // Sync the selected permanent and temporary states (Many-to-Many relationships)
+        $user->permanentStates()->sync([$validatedData['permanent_state_id'] => ['type' => 'permanent']]);
+        $user->temporaryStates()->sync([$validatedData['temporary_state_id'] => ['type' => 'temporary']]);
+
+        // Sync the selected permanent cities with type 'permanent'
+        $permanentCityData = [];
+        foreach ($validatedData['permanent_city_ids'] as $cityId) {
+            $permanentCityData[$cityId] = ['type' => 'permanent'];
+        }
+        $user->permanentCities()->sync($permanentCityData);
+
+        // Sync the selected temporary cities with type 'temporary'
+        $temporaryCityData = [];
+        foreach ($validatedData['temporary_city_ids'] as $cityId) {
+            $temporaryCityData[$cityId] = ['type' => 'temporary'];
+        }
+    $user->temporaryCities()->sync($temporaryCityData);
 
         return response()->json([
             'message' => 'User updated successfully!',

@@ -20,10 +20,20 @@ class State extends Model
     }
 
     /**
-     * Many-to-Many relationship: State can have multiple Users.
+     * Many-to-Many relationship: State can have multiple Users as Permanent.
      */
-    public function users()
+    public function permanentUsers()
     {
-        return $this->belongsToMany(User::class, 'user_state');
+        return $this->belongsToMany(User::class, 'user_state')
+                    ->wherePivot('type', 'permanent'); // Filter by 'permanent' type
+    }
+
+    /**
+     * Many-to-Many relationship: State can have multiple Users as Temporary.
+     */
+    public function temporaryUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_state')
+                    ->wherePivot('type', 'temporary'); // Filter by 'temporary' type
     }
 }

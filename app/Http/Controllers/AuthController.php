@@ -21,8 +21,12 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'address' => 'nullable|string',
             'gender' => 'nullable|in:Male,Female',
-            'state_ids' => 'array|required',  // Accepts multiple states
-            'city_ids' => 'array|required',   // Accepts multiple cities
+            // 'state_ids' => 'array|required',  // Accepts multiple states
+            // 'city_ids' => 'array|required',   // Accepts multiple cities
+            'permanent_state_id' => 'required', // Validate permanent state
+            'permanent_city_ids' => 'array|required', // Validate permanent cities
+            'temporary_state_id' => 'nullable', // Optional temporary state
+            'temporary_city_ids' => 'nullable|array', // Optional temporary cities
         ]);
 
         // Generate a unique activation token
@@ -39,9 +43,11 @@ class AuthController extends Controller
             'activation_token' => $activationToken,  // Store the activation token
         ]);
 
-        // Attach the selected states and cities to the user (Many-to-Many)
-        $user->states()->attach($request->state_ids);
-        $user->cities()->attach($request->city_ids);
+        $user->permanentStates()->attach($request->permanent_state_id, ['type' => 'permanent']);
+        $user->temporaryStates()->attach($request->temporary_state_id, ['type' => 'temporary']);
+
+        $user->permanentCities()->attach($request->permanent_city_ids, ['type' => 'permanent']);
+        $user->temporaryCities()->attach($request->temporary_city_ids, ['type' => 'temporary']);
 
         // Send activation email with the activation token
         Mail::to($user->email)->send(new ActivationEmail($user, $activationToken));  // Pass token to email

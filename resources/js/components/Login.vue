@@ -51,7 +51,6 @@
         } catch (error) {
           // Handle specific error responses from the server
           if (error.response && error.response.status === 403) {
-            // If the user's account is not activated, show an appropriate message
             errorMessage.value = 'Please activate your account. Check your email for the activation link.';
           } else if (error.response && error.response.status === 401) {
             // Invalid login credentials

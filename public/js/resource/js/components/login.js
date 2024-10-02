@@ -59,7 +59,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _context.t0 = _context["catch"](0);
               // Handle specific error responses from the server
               if (_context.t0.response && _context.t0.response.status === 403) {
-                // If the user's account is not activated, show an appropriate message
                 errorMessage.value = 'Please activate your account. Check your email for the activation link.';
               } else if (_context.t0.response && _context.t0.response.status === 401) {
                 // Invalid login credentials

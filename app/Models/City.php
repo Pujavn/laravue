@@ -19,10 +19,20 @@ class City extends Model
     }
 
     /**
-     * Many-to-Many relationship: City can have multiple Users.
+     * Many-to-Many relationship: City can have multiple Users as Permanent.
      */
-    public function users()
+    public function permanentUsers()
     {
-        return $this->belongsToMany(User::class, 'user_city');
+        return $this->belongsToMany(User::class, 'user_city')
+                    ->wherePivot('type', 'permanent'); // Filter by 'permanent' type
+    }
+
+    /**
+     * Many-to-Many relationship: City can have multiple Users as Temporary.
+     */
+    public function temporaryUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_city')
+                    ->wherePivot('type', 'temporary'); // Filter by 'temporary' type
     }
 }

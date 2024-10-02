@@ -2,31 +2,37 @@
   <div class="container mt-5">
     <h2>Register</h2>
     <form @submit.prevent="registerUser">
+      <!-- Name Field -->
       <div class="form-group">
         <label for="name">Name</label>
         <input v-model="form.name" type="text" class="form-control" placeholder="Enter your name" required>
       </div>
 
+      <!-- Email Field -->
       <div class="form-group">
         <label for="email">Email</label>
         <input v-model="form.email" type="email" class="form-control" placeholder="Enter your email" required>
       </div>
 
+      <!-- Password Field -->
       <div class="form-group">
         <label for="password">Password</label>
         <input v-model="form.password" type="password" class="form-control" placeholder="Enter your password" required>
       </div>
 
+      <!-- Password Confirmation Field -->
       <div class="form-group">
         <label for="password_confirmation">Confirm Password</label>
         <input v-model="form.password_confirmation" type="password" class="form-control" placeholder="Confirm your password" required>
       </div>
 
+      <!-- Address Field -->
       <div class="form-group">
         <label for="address">Address</label>
         <input v-model="form.address" type="text" class="form-control" placeholder="Enter your address">
       </div>
 
+      <!-- Gender Field -->
       <div class="form-group">
         <label for="gender">Gender</label>
         <select v-model="form.gender" class="form-control">
@@ -36,31 +42,44 @@
         </select>
       </div>
 
-      <!-- State Dropdown -->
+      <!-- Permanent State Dropdown -->
       <div class="form-group">
-        <label for="state">Select State</label>
-        <select v-model="selectedState" class="form-control" @change="fetchCities">
-          <option value="" disabled>Select a state</option>
+        <label for="permanent_state">Select Permanent State</label>
+        <select v-model="form.permanent_state_id" class="form-control" @change="fetchCities('permanent')">
+          <option value="" disabled>Select a permanent state</option>
           <option v-for="state in states" :key="state.id" :value="state.id">{{ state.name }}</option>
         </select>
       </div>
 
-      <!-- City Dropdown -->
+      <!-- Permanent City Dropdown -->
       <div class="form-group">
-        <label for="city">Select City</label>
-        <select v-model="form.city_ids" class="form-control" multiple>
-          <option v-for="city in cities" :key="city.id" :value="city.id">{{ city.name }}</option>
+        <label for="permanent_city">Select Permanent City</label>
+        <select v-model="form.permanent_city_ids" class="form-control" multiple>
+          <option v-for="city in permanentCities" :key="city.id" :value="city.id">{{ city.name }}</option>
+        </select>
+      </div>
+
+      <!-- Temporary State Dropdown -->
+      <div class="form-group">
+        <label for="temporary_state">Select Temporary State</label>
+        <select v-model="form.temporary_state_id" class="form-control" @change="fetchCities('temporary')">
+          <option value="" disabled>Select a temporary state</option>
+          <option v-for="state in states" :key="state.id" :value="state.id">{{ state.name }}</option>
+        </select>
+      </div>
+
+      <!-- Temporary City Dropdown -->
+      <div class="form-group">
+        <label for="temporary_city">Select Temporary City</label>
+        <select v-model="form.temporary_city_ids" class="form-control" multiple>
+          <option v-for="city in temporaryCities" :key="city.id" :value="city.id">{{ city.name }}</option>
         </select>
       </div>
 
       <button type="submit" class="btn btn-primary mt-3">Register</button>
 
-      <div v-if="error" class="alert alert-danger mt-3">
-        {{ error }}
-      </div>
-      <div v-if="success" class="alert alert-success mt-3">
-        {{ success }}
-      </div>
+      <div v-if="error" class="alert alert-danger mt-3">{{ error }}</div>
+      <div v-if="success" class="alert alert-success mt-3">{{ success }}</div>
     </form>
   </div>
 </template>
@@ -78,14 +97,16 @@ export default {
         password_confirmation: '',
         address: '',
         gender: '',
-        state_ids: [], // Holds the selected state ID(s) before form submission
-        city_ids: []   // Holds selected cities
+        permanent_state_id: null,
+        permanent_city_ids: [],
+        temporary_state_id: null,
+        temporary_city_ids: [],
       },
-      selectedState: '',  // Track the selected state
-      states: [],         // List of states from the backend
-      cities: [],         // List of cities fetched based on the selected state
+      states: [], // All available states
+      permanentCities: [], // Permanent cities based on selected permanent state
+      temporaryCities: [], // Temporary cities based on selected temporary state
       error: null,
-      success: null
+      success: null,
     };
   },
   methods: {
@@ -97,56 +118,41 @@ export default {
         console.error('Failed to fetch states:', error);
       }
     },
-    async fetchCities() {
+    async fetchCities(type) {
       try {
-        // Ensure a state is selected
-        if (this.selectedState) {
-          // Fetch cities based on the selected state
-          const response = await axios.get(`/states/${this.selectedState}/cities`);
-          this.cities = response.data;
-        } else {
-          this.cities = [];  // Reset cities if no state is selected
+        let stateId = type === 'permanent' ? this.form.permanent_state_id : this.form.temporary_state_id;
+        if (stateId) {
+          const response = await axios.get(`/states/${stateId}/cities`);
+          if (type === 'permanent') {
+            this.permanentCities = response.data;
+          } else {
+            this.temporaryCities = response.data;
+          }
         }
       } catch (error) {
         console.error('Failed to fetch cities:', error);
       }
     },
     async registerUser() {
-      // Assign the selected state to form.state_ids before form submission
-      this.form.state_ids = [this.selectedState];  // Even if it's a single state, it should be an array
-
       try {
-        // console.log('Form data before submitting:', this.form);  // Debugging
-        const response = await axios.post('/register', this.form);
-        // On success, show a success message
-        this.success = 'Registration successful! Please check your email to activate your account.';
-        this.error = null;
-        this.resetForm();
+          const response = await axios.post('/register', this.form);
+          // On success, show a success message
+          this.success = 'Registration successful! Please check your email to activate your account.';
+          this.error = null;
+          this.resetForm();
 
-        // Redirect to the home page after 2 seconds
-        setTimeout(() => {
-          this.$router.push({ name: 'home' });  // 'home' should match the name of your home route
-        }, 2000);
-
+          // Redirect to the home page after 2 seconds
+          setTimeout(() => {
+            this.$router.push({ name: 'home' });  // 'home' should match the name of your home route
+          }, 2000);
       } catch (error) {
         this.error = error.response.data.errors || 'Registration failed';
         this.success = null;
       }
-    },
-    resetForm() {
-      this.form.name = '';
-      this.form.email = '';
-      this.form.password = '';
-      this.form.password_confirmation = '';
-      this.form.address = '';
-      this.form.gender = '';
-      this.form.state_ids = [];
-      this.form.city_ids = [];
-      this.selectedState = '';
     }
   },
   mounted() {
-    this.fetchStates();  // Fetch states when the component is mounted
+    this.fetchStates();
   }
 };
 </script>
